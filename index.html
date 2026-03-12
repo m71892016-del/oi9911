@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>المسابقة العلمية</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="bg-logo"></div>
+
+    <div class="container">
+        
+        <div id="screen-start" class="screen active">
+            <button id="btn-new-game" class="main-btn">مسابقة جديدة</button>
+        </div>
+
+        <div id="screen-setup" class="screen hidden">
+            <h2>إعداد المسابقة</h2>
+            <input type="text" id="team1-input" placeholder="اسم الفريق الأول (مثال: الفريق 1)">
+            <input type="text" id="team2-input" placeholder="اسم الفريق الثاني (مثال: الفريق 2)">
+            <button id="btn-enter" class="main-btn">دخول</button>
+        </div>
+
+        <div id="screen-board" class="screen hidden">
+            <div class="teams-header">
+                <div class="team-card">
+                    <h3 id="display-team1">الفريق 1</h3>
+                    <p>النقاط: <span id="score-team1">0</span></p>
+                </div>
+                <div class="team-card">
+                    <h3 id="display-team2">الفريق 2</h3>
+                    <p>النقاط: <span id="score-team2">0</span></p>
+                </div>
+            </div>
+            <div class="subjects-container">
+                <button class="subject-btn" onclick="openSubject(0)">المادة 1</button>
+                <button class="subject-btn" onclick="openSubject(1)">المادة 2</button>
+                <button class="subject-btn" onclick="openSubject(2)">المادة 3</button>
+                <button class="subject-btn" onclick="openSubject(3)">المادة 4</button>
+            </div>
+        </div>
+
+        <div id="screen-questions" class="screen hidden">
+            <h2 id="current-subject-title">المادة</h2>
+            <div id="questions-grid" class="questions-grid">
+                </div>
+            <button class="back-btn" onclick="showScreen('screen-board')">عودة للوحة الرئيسية</button>
+        </div>
+
+        <div id="screen-active-question" class="screen hidden">
+            <h3 id="turn-indicator">سؤال جديد</h3>
+            
+            <div class="timer-container">
+                <div class="timer-circle">
+                    <span id="timer-text">30</span>
+                </div>
+            </div>
+
+            <h2 id="question-text">نص السؤال يظهر هنا؟</h2>
+            
+            <div class="options-grid">
+                <button class="option-btn" onclick="checkAnswer(0)" id="opt0">الخيار 1</button>
+                <button class="option-btn" onclick="checkAnswer(1)" id="opt1">الخيار 2</button>
+                <button class="option-btn" onclick="checkAnswer(2)" id="opt2">الخيار 3</button>
+                <button class="option-btn" onclick="checkAnswer(3)" id="opt3">الخيار 4</button>
+            </div>
+            <button class="back-btn" onclick="showScreen('screen-questions')">إلغاء وعودة</button>
+        </div>
+
+        <div id="correct-modal" class="modal hidden">
+            <div class="modal-content">
+                <h2 style="color: green;">إجابة صحيحة! 🎉</h2>
+                <p>لمن تريد إضافة النقطة؟</p>
+                <button class="main-btn" onclick="awardPoint(1)" id="award-t1">الفريق 1</button>
+                <button class="main-btn" onclick="awardPoint(2)" id="award-t2">الفريق 2</button>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
