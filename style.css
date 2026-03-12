@@ -1,0 +1,169 @@
+/* استيراد خط عربي جميل */
+@import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap');
+
+* {
+    box-sizing: border-box;
+    font-family: 'Tajawal', sans-serif;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    background-color: #f4d9c6; /* لون مقارب لخلفية الصورة */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+}
+
+/* الشعار في الخلفية مع شفافية 50% */
+.bg-logo {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('https://h.top4top.io/p_37234m7171.jpg');
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+    opacity: 0.5; /* نسبة الرؤية 50% كما طلبت */
+    z-index: -1;
+}
+
+.container {
+    width: 90%;
+    max-width: 800px;
+    text-align: center;
+    position: relative;
+    z-index: 1;
+}
+
+/* التحكم بالشاشات (إخفاء وإظهار) */
+.screen {
+    display: none;
+    animation: fadeIn 0.5s ease-in-out;
+}
+.screen.active {
+    display: block;
+}
+
+/* حركات الأنيميشن */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* تصميم الأزرار العامة */
+.main-btn, .subject-btn, .option-btn, .back-btn {
+    padding: 15px 30px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: white;
+    border: 2px solid #fff;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+    margin: 10px;
+}
+
+.main-btn {
+    background: linear-gradient(to bottom, #8BC34A, #689F38); /* لون أخضر مشابه للصورة */
+}
+.main-btn:hover { background: linear-gradient(to bottom, #689F38, #8BC34A); }
+
+/* تصميم لوحة الفرق */
+.teams-header {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 40px;
+}
+.team-card {
+    background: linear-gradient(to bottom, #8BC34A, #689F38);
+    color: white;
+    padding: 10px 40px;
+    border-radius: 10px;
+    border: 2px solid #fff;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+}
+
+/* أزرار المواد والأسئلة */
+.subjects-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+}
+.subject-btn {
+    background: linear-gradient(to bottom, #1E88E5, #1565C0); /* لون أزرق للمواد */
+    width: 200px;
+}
+
+.questions-grid, .options-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    margin: 20px 0;
+}
+
+.option-btn {
+    background: linear-gradient(to bottom, #FF9800, #F57C00);
+}
+
+.back-btn {
+    background: #d32f2f;
+    font-size: 1rem;
+    padding: 10px 20px;
+}
+
+/* تصميم حقول الإدخال */
+input[type="text"] {
+    padding: 15px;
+    width: 80%;
+    margin: 10px 0;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 1.1rem;
+}
+
+/* تصميم المؤقت الزمني الدائري */
+.timer-container {
+    display: flex;
+    justify-content: center;
+    margin: 20px 0;
+}
+.timer-circle {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background-color: #fff;
+    border: 5px solid #d32f2f;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 2rem;
+    font-weight: bold;
+    color: #d32f2f;
+    box-shadow: 0 0 15px rgba(211, 47, 47, 0.5);
+}
+
+/* تصميم النافذة المنبثقة */
+.modal {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+}
+.modal.hidden { display: none; }
+.modal-content {
+    background: white;
+    padding: 40px;
+    border-radius: 15px;
+    text-align: center;
+}
