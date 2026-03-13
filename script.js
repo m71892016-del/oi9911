@@ -7,7 +7,7 @@ const winScore = 10;
 let currentSubjectIndex = null;
 let currentQuestionIndex = null;
 let timerInterval = null;
-let timeCount = 0;
+let timeLeft = 30;
 let timerStarted = false;
 
 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -126,17 +126,22 @@ window.openQuestion = function(questionIndex) {
     const qData = database[currentSubjectIndex].questions[questionIndex];
     
     document.getElementById('question-text').innerText = qData.q;
+    document.getElementById('turn-indicator').innerText = `السؤال ${questionIndex + 1}`;
+    
+    document.getElementById('active-score-t1-display').innerText = `${team1Name}: ${team1Score}`;
+    document.getElementById('active-score-t2-display').innerText = `${team2Name}: ${team2Score}`;
     
     for (let i = 0; i < 4; i++) {
         const optBtn = document.getElementById(`opt${i}`);
         optBtn.innerText = qData.options[i];
         optBtn.classList.remove('correct-answer-anim');
+        optBtn.classList.remove('wrong-answer-anim');
         optBtn.disabled = false;
     }
     
-    timeCount = 0;
+    timeLeft = 30;
     timerStarted = false;
-    document.getElementById('timer-text').innerText = timeCount;
+    document.getElementById('timer-text').innerText = timeLeft;
     clearInterval(timerInterval);
     
     showScreen('screen-active-question');
@@ -157,15 +162,15 @@ document.getElementById('btn-start-timer').addEventListener('click', () => {
     if (timerStarted) return;
     timerStarted = true;
     clearInterval(timerInterval);
-    timeCount = 0;
-    document.getElementById('timer-text').innerText = timeCount;
+    timeLeft = 30;
+    document.getElementById('timer-text').innerText = timeLeft;
     
     timerInterval = setInterval(() => {
-        timeCount++;
-        document.getElementById('timer-text').innerText = timeCount;
+        timeLeft--;
+        document.getElementById('timer-text').innerText = timeLeft;
         playTickSound();
         
-        if (timeCount >= 30) {
+        if (timeLeft <= 0) {
             clearInterval(timerInterval);
             timerStarted = false;
             handleTimeOut();
@@ -193,7 +198,7 @@ window.checkAnswer = function(selectedIndex) {
     if (selectedIndex === qData.correct) {
         document.getElementById('correct-modal').classList.remove('hidden');
     } else {
-        alert("إجابة خاطئة!");
+        document.getElementById(`opt${selectedIndex}`).classList.add('wrong-answer-anim');
     }
 }
 
@@ -209,6 +214,8 @@ window.awardPoint = function(teamNumber) {
     
     document.getElementById('score-team1').innerText = team1Score;
     document.getElementById('score-team2').innerText = team2Score;
+    document.getElementById('active-score-t1-display').innerText = `${team1Name}: ${team1Score}`;
+    document.getElementById('active-score-t2-display').innerText = `${team2Name}: ${team2Score}`;
     document.getElementById('correct-modal').classList.add('hidden');
     
     if (team1Score >= winScore && team2Score >= winScore) {
