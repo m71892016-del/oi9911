@@ -79,7 +79,7 @@
         <div id="screen-active-question" class="screen hidden">
             <div class="horizontal-layout">
                 <div class="question-side">
-                    <h3 id="turn-indicator">سؤال جديد</h3>
+                    <h3 id="turn-indicator">السؤال 1</h3>
                     
                     <div class="question-box">
                         <h2 id="question-text">نص السؤال يظهر هنا؟</h2>
@@ -87,15 +87,20 @@
                     
                     <div class="controls-row">
                         <button class="main-btn" onclick="nextQuestion()">السؤال التالي</button>
-                        <button class="back-btn" onclick="showScreen('screen-questions')">إنهاء أو توقف</button>
+                        <button class="back-btn" onclick="showScreen('screen-questions')">زر رجوع</button>
                     </div>
                 </div>
 
                 <div class="options-side">
+                    <div class="active-scores-display">
+                        <span id="active-score-t1-display">الفريق 1: 0</span>
+                        <span id="active-score-t2-display">الفريق 2: 0</span>
+                    </div>
+
                     <div class="timer-container">
                         <button id="btn-start-timer" class="main-btn">ابدأ العداد</button>
                         <div class="timer-circle">
-                            <span id="timer-text">0</span>
+                            <span id="timer-text">30</span>
                         </div>
                     </div>
 
