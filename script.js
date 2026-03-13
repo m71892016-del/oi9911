@@ -1,4 +1,3 @@
-// ================= المتغيرات الأساسية =================
 let team1Name = "الفريق 1";
 let team2Name = "الفريق 2";
 let team1Score = 0;
@@ -8,20 +7,20 @@ const winScore = 10;
 let currentSubjectIndex = null;
 let currentQuestionIndex = null;
 let timerInterval = null;
-let timeLeft = 30;
+let timeCount = 0;
+let timerStarted = false;
 
-// إعداد الصوت (نغمة التيك تاك) باستخدام Web Audio API لضمان عملها بدون ملفات خارجية
 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 function playTickSound() {
     if (audioCtx.state === 'suspended') audioCtx.resume();
     const oscillator = audioCtx.createOscillator();
     const gainNode = audioCtx.createGain();
     
-    oscillator.type = 'triangle'; // نوع الصوت
-    oscillator.frequency.setValueAtTime(600, audioCtx.currentTime); // التردد
+    oscillator.type = 'triangle';
+    oscillator.frequency.setValueAtTime(600, audioCtx.currentTime);
     
-    gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime); // مستوى الصوت
-    gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.1); // تلاشي الصوت
+    gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
+    gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.1);
     
     oscillator.connect(gainNode);
     gainNode.connect(audioCtx.destination);
@@ -30,9 +29,7 @@ function playTickSound() {
     oscillator.stop(audioCtx.currentTime + 0.1);
 }
 
-// ================= قاعدة بيانات الأسئلة =================
-// 4 مواد، كل مادة 6 أسئلة (المجموع 24). يمكنك تعديل النصوص كما تشاء.
-const database = [
+let database = JSON.parse(localStorage.getItem('quizDatabase')) || [
     {
         subjectName: "المادة 1",
         questions: [
@@ -55,33 +52,33 @@ const database = [
             { q: "سؤال 6 المادة 2: ...", options: ["1", "2", "3", "4"], correct: 1, isUsed: false }
         ]
     },
-    // مادة 3
     { subjectName: "المادة 3", questions: Array(6).fill(null).map((_, i) => ({ q: `سؤال ${i+1} المادة 3`, options: ["أ", "ب", "ج", "د"], correct: 0, isUsed: false })) },
-    // مادة 4
     { subjectName: "المادة 4", questions: Array(6).fill(null).map((_, i) => ({ q: `سؤال ${i+1} المادة 4`, options: ["أ", "ب", "ج", "د"], correct: 0, isUsed: false })) }
 ];
 
+function updateSubjectButtons() {
+    for(let i=0; i<4; i++) {
+        const btn = document.getElementById(`sub-btn-${i}`);
+        if(btn && database[i]) {
+            btn.innerText = database[i].subjectName;
+        }
+    }
+}
 
-// ================= دوال التنقل بين الشاشات =================
 function showScreen(screenId) {
-    // إخفاء جميع الشاشات
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
     document.querySelectorAll('.screen').forEach(s => s.classList.add('hidden'));
     
-    // إظهار الشاشة المطلوبة
     const target = document.getElementById(screenId);
     target.classList.remove('hidden');
     target.classList.add('active');
+    updateSubjectButtons();
 }
 
-// ================= إدارة الأحداث (Events) =================
-
-// زر مسابقة جديدة
 document.getElementById('btn-new-game').addEventListener('click', () => {
     showScreen('screen-setup');
 });
 
-// زر الدخول وتعيين الأسماء
 document.getElementById('btn-enter').addEventListener('click', () => {
     const t1Input = document.getElementById('team1-input').value;
     const t2Input = document.getElementById('team2-input').value;
@@ -92,14 +89,12 @@ document.getElementById('btn-enter').addEventListener('click', () => {
     document.getElementById('display-team1').innerText = team1Name;
     document.getElementById('display-team2').innerText = team2Name;
     
-    // تحديث أزرار النافذة المنبثقة
     document.getElementById('award-t1').innerText = `إضافة نقطة لـ (${team1Name})`;
     document.getElementById('award-t2').innerText = `إضافة نقطة لـ (${team2Name})`;
 
     showScreen('screen-board');
 });
 
-// فتح مادة معينة وعرض أسئلتها الـ 6
 window.openSubject = function(subjectIndex) {
     currentSubjectIndex = subjectIndex;
     const subject = database[subjectIndex];
@@ -107,13 +102,12 @@ window.openSubject = function(subjectIndex) {
     document.getElementById('current-subject-title').innerText = subject.subjectName;
     
     const grid = document.getElementById('questions-grid');
-    grid.innerHTML = ''; // تفريغ الشبكة
+    grid.innerHTML = ''; 
     
     subject.questions.forEach((q, index) => {
         const btn = document.createElement('button');
         btn.className = 'subject-btn';
         btn.innerText = `السؤال ${index + 1}`;
-        // إذا تم الإجابة على السؤال سابقاً نجعله غير مفعل
         if (q.isUsed) {
             btn.style.opacity = '0.5';
             btn.style.cursor = 'not-allowed';
@@ -127,78 +121,160 @@ window.openSubject = function(subjectIndex) {
     showScreen('screen-questions');
 }
 
-// فتح سؤال محدد
 window.openQuestion = function(questionIndex) {
     currentQuestionIndex = questionIndex;
     const qData = database[currentSubjectIndex].questions[questionIndex];
     
     document.getElementById('question-text').innerText = qData.q;
     
-    // وضع الخيارات في الأزرار
     for (let i = 0; i < 4; i++) {
-        document.getElementById(`opt${i}`).innerText = qData.options[i];
+        const optBtn = document.getElementById(`opt${i}`);
+        optBtn.innerText = qData.options[i];
+        optBtn.classList.remove('correct-answer-anim');
+        optBtn.disabled = false;
     }
+    
+    timeCount = 0;
+    timerStarted = false;
+    document.getElementById('timer-text').innerText = timeCount;
+    clearInterval(timerInterval);
     
     showScreen('screen-active-question');
-    startTimer();
 }
 
-// ================= المؤقت الزمني =================
-function startTimer() {
+window.nextQuestion = function() {
     clearInterval(timerInterval);
-    timeLeft = 30;
-    document.getElementById('timer-text').innerText = timeLeft;
-    
-    timerInterval = setInterval(() => {
-        timeLeft--;
-        document.getElementById('timer-text').innerText = timeLeft;
-        playTickSound(); // تشغيل صوت التيك
-        
-        if (timeLeft <= 0) {
-            clearInterval(timerInterval);
-            alert("انتهى الوقت!");
-            showScreen('screen-questions'); // العودة لأسئلة المادة
-        }
-    }, 1000);
-}
-
-// ================= التحقق من الإجابة =================
-window.checkAnswer = function(selectedIndex) {
-    clearInterval(timerInterval); // إيقاف المؤقت
-    const qData = database[currentSubjectIndex].questions[currentQuestionIndex];
-    
-    if (selectedIndex === qData.correct) {
-        // إجابة صحيحة
-        qData.isUsed = true; // تم استخدام السؤال
-        document.getElementById('correct-modal').classList.remove('hidden');
+    const subject = database[currentSubjectIndex];
+    if (currentQuestionIndex !== null && currentQuestionIndex < subject.questions.length - 1) {
+        openQuestion(currentQuestionIndex + 1);
     } else {
-        // إجابة خاطئة
-        alert("إجابة خاطئة!");
-        qData.isUsed = true;
-        showScreen('screen-questions'); // العودة للمادة
+        alert("لا يوجد أسئلة أخرى في هذه المادة، يرجى الإنهاء أو التوقف.");
+        showScreen('screen-questions');
     }
 }
 
-// ================= إضافة النقاط =================
+document.getElementById('btn-start-timer').addEventListener('click', () => {
+    if (timerStarted) return;
+    timerStarted = true;
+    clearInterval(timerInterval);
+    timeCount = 0;
+    document.getElementById('timer-text').innerText = timeCount;
+    
+    timerInterval = setInterval(() => {
+        timeCount++;
+        document.getElementById('timer-text').innerText = timeCount;
+        playTickSound();
+        
+        if (timeCount >= 30) {
+            clearInterval(timerInterval);
+            timerStarted = false;
+            handleTimeOut();
+        }
+    }, 1000);
+});
+
+function handleTimeOut() {
+    const qData = database[currentSubjectIndex].questions[currentQuestionIndex];
+    qData.isUsed = true;
+    for (let i = 0; i < 4; i++) {
+        document.getElementById(`opt${i}`).disabled = true;
+    }
+    const correctBtn = document.getElementById(`opt${qData.correct}`);
+    correctBtn.classList.add('correct-answer-anim');
+    correctBtn.innerText = correctBtn.innerText + " (هذه الإجابة الصحيحة)";
+}
+
+window.checkAnswer = function(selectedIndex) {
+    clearInterval(timerInterval); 
+    timerStarted = false;
+    const qData = database[currentSubjectIndex].questions[currentQuestionIndex];
+    qData.isUsed = true;
+    
+    if (selectedIndex === qData.correct) {
+        document.getElementById('correct-modal').classList.remove('hidden');
+    } else {
+        alert("إجابة خاطئة!");
+    }
+}
+
 window.awardPoint = function(teamNumber) {
     if (teamNumber === 1) {
         team1Score++;
-        document.getElementById('score-team1').innerText = team1Score;
-    } else {
+    } else if (teamNumber === 2) {
         team2Score++;
-        document.getElementById('score-team2').innerText = team2Score;
+    } else if (teamNumber === 3) {
+        team1Score++;
+        team2Score++;
     }
     
-    document.getElementById('correct-modal').classList.add('hidden'); // إخفاء النافذة
+    document.getElementById('score-team1').innerText = team1Score;
+    document.getElementById('score-team2').innerText = team2Score;
+    document.getElementById('correct-modal').classList.add('hidden');
     
-    // التحقق من الفوز
-    if (team1Score >= winScore) {
+    if (team1Score >= winScore && team2Score >= winScore) {
+        alert(`🎉 تعادل! فاز كلا الفريقين!`);
+        location.reload();
+    } else if (team1Score >= winScore) {
         alert(`🎉 مبرووووك! فاز ${team1Name} بالمسابقة!`);
-        location.reload(); // إعادة تحميل الصفحة للبدء من جديد
+        location.reload(); 
     } else if (team2Score >= winScore) {
         alert(`🎉 مبرووووك! فاز ${team2Name} بالمسابقة!`);
         location.reload();
-    } else {
-        showScreen('screen-board'); // العودة للوحة الرئيسية
     }
 }
+
+window.closeModal = function() {
+    document.getElementById('correct-modal').classList.add('hidden');
+}
+
+window.openEditScreen = function() {
+    const subSelect = document.getElementById('edit-subject-select');
+    subSelect.innerHTML = '';
+    database.forEach((sub, i) => {
+        subSelect.innerHTML += `<option value="${i}">${sub.subjectName}</option>`;
+    });
+    loadEditSubject();
+    showScreen('screen-edit');
+}
+
+window.loadEditSubject = function() {
+    const subIndex = document.getElementById('edit-subject-select').value;
+    const qSelect = document.getElementById('edit-question-select');
+    qSelect.innerHTML = '';
+    database[subIndex].questions.forEach((q, i) => {
+        qSelect.innerHTML += `<option value="${i}">السؤال ${i+1}</option>`;
+    });
+    
+    document.getElementById('edit-subject-name').value = database[subIndex].subjectName;
+    loadEditQuestion();
+}
+
+window.loadEditQuestion = function() {
+    const subIndex = document.getElementById('edit-subject-select').value;
+    const qIndex = document.getElementById('edit-question-select').value;
+    const qData = database[subIndex].questions[qIndex];
+    
+    document.getElementById('edit-q-text').value = qData.q;
+    document.getElementById('edit-opt0').value = qData.options[0];
+    document.getElementById('edit-opt1').value = qData.options[1];
+    document.getElementById('edit-opt2').value = qData.options[2];
+    document.getElementById('edit-opt3').value = qData.options[3];
+    document.getElementById('edit-correct').value = qData.correct;
+}
+
+window.saveEditedQuestion = function() {
+    const subIndex = document.getElementById('edit-subject-select').value;
+    const qIndex = document.getElementById('edit-question-select').value;
+    
+    database[subIndex].subjectName = document.getElementById('edit-subject-name').value;
+    database[subIndex].questions[qIndex].q = document.getElementById('edit-q-text').value;
+    database[subIndex].questions[qIndex].options[0] = document.getElementById('edit-opt0').value;
+    database[subIndex].questions[qIndex].options[1] = document.getElementById('edit-opt1').value;
+    database[subIndex].questions[qIndex].options[2] = document.getElementById('edit-opt2').value;
+    database[subIndex].questions[qIndex].options[3] = document.getElementById('edit-opt3').value;
+    database[subIndex].questions[qIndex].correct = parseInt(document.getElementById('edit-correct').value);
+    
+    localStorage.setItem('quizDatabase', JSON.stringify(database));
+    alert('تم الحفظ بنجاح!');
+}
+updateSubjectButtons();
