@@ -172,7 +172,7 @@ body {
     font-size: 1.5rem;
 }
 
-.questions-grid, .options-grid {
+.questions-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 20px;
@@ -180,9 +180,32 @@ body {
     width: 100%;
 }
 
+.options-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-auto-rows: 100px;
+    gap: 20px;
+    margin: 20px 0;
+    width: 100%;
+}
+
 .option-btn {
     background: linear-gradient(to bottom, #FF9800, #F57C00);
-    min-height: 80px;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.used-question {
+    background: #9e9e9e !important;
+    color: #e0e0e0 !important;
+    border: 2px solid #757575 !important;
+    cursor: not-allowed !important;
+    box-shadow: none !important;
+    opacity: 1 !important;
 }
 
 .correct-answer-anim {
