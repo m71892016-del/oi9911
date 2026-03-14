@@ -104,19 +104,27 @@ window.openSubject = function(subjectIndex) {
     const grid = document.getElementById('questions-grid');
     grid.innerHTML = ''; 
     
+    let allQuestionsUsed = true;
+
     subject.questions.forEach((q, index) => {
         const btn = document.createElement('button');
         btn.className = 'subject-btn';
         btn.innerText = `السؤال ${index + 1}`;
+        
         if (q.isUsed) {
-            btn.style.opacity = '0.5';
-            btn.style.cursor = 'not-allowed';
+            btn.classList.add('used-question');
             btn.disabled = true;
         } else {
+            allQuestionsUsed = false;
             btn.onclick = () => openQuestion(index);
         }
         grid.appendChild(btn);
     });
+    
+    const backToBoardBtn = document.getElementById('back-to-board-btn');
+    if (backToBoardBtn) {
+        backToBoardBtn.style.display = allQuestionsUsed ? 'inline-block' : 'none';
+    }
     
     showScreen('screen-questions');
 }
@@ -154,7 +162,7 @@ window.nextQuestion = function() {
         openQuestion(currentQuestionIndex + 1);
     } else {
         alert("لا يوجد أسئلة أخرى في هذه المادة، يرجى الإنهاء أو التوقف.");
-        showScreen('screen-questions');
+        openSubject(currentSubjectIndex);
     }
 }
 
