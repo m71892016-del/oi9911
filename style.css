@@ -85,16 +85,30 @@ body {
 
 .active-scores-display {
     display: flex;
-    justify-content: space-around;
+    justify-content: space-between;
     width: 100%;
     margin-bottom: 10px;
     font-size: 1.4rem;
     font-weight: bold;
+}
+
+.active-scores-display span {
     color: #1565C0;
     background: rgba(255, 255, 255, 0.8);
-    padding: 10px;
+    padding: 10px 30px;
     border-radius: 10px;
     border: 2px solid #1565C0;
+}
+
+#current-subject-title {
+    background: rgba(255, 255, 255, 0.9);
+    border: 2px solid #1565C0;
+    padding: 15px 40px;
+    border-radius: 10px;
+    color: #1565C0;
+    display: inline-block;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
 }
 
 .screen {
