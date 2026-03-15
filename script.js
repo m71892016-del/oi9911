@@ -272,7 +272,7 @@ window.endGame = function() {
             winnerDisplay.style.display = 'block';
             document.getElementById('winner-text').innerText = winMsg;
             
-            const clapAudio = new Audio('https://actions.google.com/sounds/v1/crowds/female_crowd_celebration.ogg');
+            const clapAudio = new Audio('https://actions.google.com/sounds/v1/crowds/stadium_crowd_cheer.ogg');
             clapAudio.play().catch(e => console.log(e));
             
             createBalloons();
