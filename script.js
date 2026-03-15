@@ -205,7 +205,12 @@ window.checkAnswer = function(selectedIndex) {
     localStorage.setItem('quizDatabase', JSON.stringify(database));
     
     if (selectedIndex === qData.correct) {
-        document.getElementById('correct-modal').classList.remove('hidden');
+        const correctBtn = document.getElementById(`opt${selectedIndex}`);
+        correctBtn.classList.add('correct-answer-anim');
+        
+        setTimeout(() => {
+            document.getElementById('correct-modal').classList.remove('hidden');
+        }, 3000);
     } else {
         document.getElementById(`opt${selectedIndex}`).classList.add('wrong-answer-anim');
     }
@@ -226,6 +231,11 @@ window.awardPoint = function(teamNumber) {
     document.getElementById('active-score-t1-display').innerText = `${team1Name}: ${team1Score}`;
     document.getElementById('active-score-t2-display').innerText = `${team2Name}: ${team2Score}`;
     document.getElementById('correct-modal').classList.add('hidden');
+    
+    for (let i = 0; i < 4; i++) {
+        document.getElementById(`opt${i}`).classList.remove('correct-answer-anim');
+        document.getElementById(`opt${i}`).classList.remove('wrong-answer-anim');
+    }
 }
 
 window.endGame = function() {
@@ -239,7 +249,6 @@ window.endGame = function() {
     }
 
     const celebScreen = document.getElementById('celebration-screen');
-    celebScreen.classList.remove('hidden');
     celebScreen.style.display = 'flex';
     
     let count = 5;
@@ -247,10 +256,14 @@ window.endGame = function() {
     countDisplay.style.display = 'block';
     countDisplay.innerText = count;
 
+    const beepAudio = new Audio('https://actions.google.com/sounds/v1/alarms/beep_short.ogg');
+
     const countdownInterval = setInterval(() => {
         count--;
         if (count > 0) {
             countDisplay.innerText = count;
+            beepAudio.currentTime = 0;
+            beepAudio.play().catch(e => console.log(e));
         } else {
             clearInterval(countdownInterval);
             countDisplay.style.display = 'none';
@@ -259,8 +272,8 @@ window.endGame = function() {
             winnerDisplay.style.display = 'block';
             document.getElementById('winner-text').innerText = winMsg;
             
-            const clapAudio = new Audio('https://actions.google.com/sounds/v1/crowds/light_applause.ogg');
-            clapAudio.play();
+            const clapAudio = new Audio('https://actions.google.com/sounds/v1/crowds/female_crowd_celebration.ogg');
+            clapAudio.play().catch(e => console.log(e));
             
             createBalloons();
         }
@@ -270,12 +283,12 @@ window.endGame = function() {
 function createBalloons() {
     const container = document.getElementById('balloons-container');
     const colors = ['#FF1744', '#00E676', '#2979FF', '#FFEA00', '#D500F9', '#FF9100'];
-    for(let i=0; i<40; i++) {
+    for(let i=0; i<60; i++) {
         const balloon = document.createElement('div');
         balloon.className = 'balloon';
         balloon.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
         balloon.style.left = Math.random() * 100 + 'vw';
-        balloon.style.animationDuration = (Math.random() * 3 + 3) + 's';
+        balloon.style.animationDuration = (Math.random() * 4 + 3) + 's';
         balloon.style.animationDelay = (Math.random() * 2) + 's';
         
         const string = document.createElement('div');
@@ -298,6 +311,10 @@ window.resetUsedQuestions = function() {
 
 window.closeModal = function() {
     document.getElementById('correct-modal').classList.add('hidden');
+    for (let i = 0; i < 4; i++) {
+        document.getElementById(`opt${i}`).classList.remove('correct-answer-anim');
+        document.getElementById(`opt${i}`).classList.remove('wrong-answer-anim');
+    }
 }
 
 window.openEditScreen = function() {
