@@ -294,19 +294,27 @@ input[type="text"], input[type="number"], select {
 }
 
 @keyframes float3d {
-    0% { transform: scale(1) perspective(600px) rotateX(10deg) rotateY(-10deg); }
-    100% { transform: scale(1.1) perspective(600px) rotateX(-10deg) rotateY(10deg); }
+    0% { transform: scale(1) perspective(1000px) rotateX(15deg) rotateY(-15deg) translateZ(50px); }
+    50% { transform: scale(1.2) perspective(1000px) rotateX(-5deg) rotateY(10deg) translateZ(100px); color: #fff; text-shadow: 0 0 50px #FFD700, 0 0 20px #FF9800; }
+    100% { transform: scale(1) perspective(1000px) rotateX(-15deg) rotateY(15deg) translateZ(50px); }
+}
+
+@keyframes pulseRed {
+    0% { transform: scale(1); text-shadow: 0 0 20px #FF5722; }
+    50% { transform: scale(1.1); text-shadow: 0 0 50px #FF5722, 0 0 80px #FF5722; }
+    100% { transform: scale(1); text-shadow: 0 0 20px #FF5722; }
 }
 
 .balloon {
     position: absolute;
     bottom: -150px;
-    width: 60px;
-    height: 80px;
+    width: 80px;
+    height: 110px;
     border-radius: 50% 50% 50% 50% / 40% 40% 60% 60%;
     animation: floatUp ease-in infinite;
-    box-shadow: inset -10px -10px 15px rgba(0,0,0,0.2);
-    opacity: 0.9;
+    box-shadow: inset -10px -10px 15px rgba(0,0,0,0.3), 0 0 20px rgba(255,255,255,0.5);
+    opacity: 0.95;
+    z-index: 999;
 }
 .balloon::before {
     content: '';
