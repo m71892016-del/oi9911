@@ -238,7 +238,9 @@ window.endGame = function() {
         winMsg = `🎉 انتهت المسابقة! تعادل الفريقين! 🎉`;
     }
 
-    document.getElementById('celebration-screen').classList.remove('hidden');
+    const celebScreen = document.getElementById('celebration-screen');
+    celebScreen.classList.remove('hidden');
+    celebScreen.style.display = 'flex';
     
     let count = 5;
     const countDisplay = document.getElementById('countdown-display');
