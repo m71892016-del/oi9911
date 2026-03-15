@@ -229,14 +229,59 @@ window.awardPoint = function(teamNumber) {
 }
 
 window.endGame = function() {
+    let winMsg = "";
     if(team1Score > team2Score) {
-        alert(`🎉 انتهت المسابقة! فاز ${team1Name}!`);
+        winMsg = `🎉 مبروك! فاز ${team1Name}! 🎉`;
     } else if (team2Score > team1Score) {
-        alert(`🎉 انتهت المسابقة! فاز ${team2Name}!`);
+        winMsg = `🎉 مبروك! فاز ${team2Name}! 🎉`;
     } else {
-        alert(`🎉 انتهت المسابقة! تعادل الفريقين!`);
+        winMsg = `🎉 انتهت المسابقة! تعادل الفريقين! 🎉`;
     }
-    location.reload();
+
+    document.getElementById('celebration-screen').classList.remove('hidden');
+    
+    let count = 5;
+    const countDisplay = document.getElementById('countdown-display');
+    countDisplay.style.display = 'block';
+    countDisplay.innerText = count;
+
+    const countdownInterval = setInterval(() => {
+        count--;
+        if (count > 0) {
+            countDisplay.innerText = count;
+        } else {
+            clearInterval(countdownInterval);
+            countDisplay.style.display = 'none';
+            
+            const winnerDisplay = document.getElementById('winner-display');
+            winnerDisplay.style.display = 'block';
+            document.getElementById('winner-text').innerText = winMsg;
+            
+            const clapAudio = new Audio('https://actions.google.com/sounds/v1/crowds/light_applause.ogg');
+            clapAudio.play();
+            
+            createBalloons();
+        }
+    }, 1000);
+}
+
+function createBalloons() {
+    const container = document.getElementById('balloons-container');
+    const colors = ['#FF1744', '#00E676', '#2979FF', '#FFEA00', '#D500F9', '#FF9100'];
+    for(let i=0; i<40; i++) {
+        const balloon = document.createElement('div');
+        balloon.className = 'balloon';
+        balloon.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+        balloon.style.left = Math.random() * 100 + 'vw';
+        balloon.style.animationDuration = (Math.random() * 3 + 3) + 's';
+        balloon.style.animationDelay = (Math.random() * 2) + 's';
+        
+        const string = document.createElement('div');
+        string.className = 'balloon-string';
+        balloon.appendChild(string);
+        
+        container.appendChild(balloon);
+    }
 }
 
 window.resetUsedQuestions = function() {
