@@ -2,7 +2,6 @@ let team1Name = "الفريق 1";
 let team2Name = "الفريق 2";
 let team1Score = 0;
 let team2Score = 0;
-const winScore = 10;
 
 let currentSubjectIndex = null;
 let currentQuestionIndex = null;
@@ -161,7 +160,7 @@ window.nextQuestion = function() {
     if (currentQuestionIndex !== null && currentQuestionIndex < subject.questions.length - 1) {
         openQuestion(currentQuestionIndex + 1);
     } else {
-        alert("لا يوجد أسئلة أخرى في هذه المادة، يرجى الإنهاء أو التوقف.");
+        alert("لا يوجد أسئلة أخرى في هذه المادة، يرجى العودة للصفحة الرئيسية.");
         openSubject(currentSubjectIndex);
     }
 }
@@ -227,17 +226,27 @@ window.awardPoint = function(teamNumber) {
     document.getElementById('active-score-t1-display').innerText = `${team1Name}: ${team1Score}`;
     document.getElementById('active-score-t2-display').innerText = `${team2Name}: ${team2Score}`;
     document.getElementById('correct-modal').classList.add('hidden');
-    
-    if (team1Score >= winScore && team2Score >= winScore) {
-        alert(`🎉 تعادل! فاز كلا الفريقين!`);
-        location.reload();
-    } else if (team1Score >= winScore) {
-        alert(`🎉 مبرووووك! فاز ${team1Name} بالمسابقة!`);
-        location.reload(); 
-    } else if (team2Score >= winScore) {
-        alert(`🎉 مبرووووك! فاز ${team2Name} بالمسابقة!`);
-        location.reload();
+}
+
+window.endGame = function() {
+    if(team1Score > team2Score) {
+        alert(`🎉 انتهت المسابقة! فاز ${team1Name}!`);
+    } else if (team2Score > team1Score) {
+        alert(`🎉 انتهت المسابقة! فاز ${team2Name}!`);
+    } else {
+        alert(`🎉 انتهت المسابقة! تعادل الفريقين!`);
     }
+    location.reload();
+}
+
+window.resetUsedQuestions = function() {
+    database.forEach(subject => {
+        subject.questions.forEach(q => {
+            q.isUsed = false;
+        });
+    });
+    localStorage.setItem('quizDatabase', JSON.stringify(database));
+    alert('تم رفع التضليل عن جميع الأسئلة!');
 }
 
 window.closeModal = function() {
