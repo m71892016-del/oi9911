@@ -274,6 +274,9 @@ window.endGame = function() {
             
             const clapAudio = new Audio('https://actions.google.com/sounds/v1/crowds/stadium_crowd_cheer.ogg');
             clapAudio.play().catch(e => console.log(e));
+
+            const victoryMusic = new Audio('https://actions.google.com/sounds/v1/brass/brass_fanfare_with_timpani.ogg');
+            victoryMusic.play().catch(e => console.log(e));
             
             createBalloons();
         }
