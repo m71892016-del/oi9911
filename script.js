@@ -104,8 +104,6 @@ window.openSubject = function(subjectIndex) {
     const grid = document.getElementById('questions-grid');
     grid.innerHTML = ''; 
     
-    let allQuestionsUsed = true;
-
     subject.questions.forEach((q, index) => {
         const btn = document.createElement('button');
         btn.className = 'subject-btn';
@@ -115,7 +113,6 @@ window.openSubject = function(subjectIndex) {
             btn.classList.add('used-question');
             btn.disabled = true;
         } else {
-            allQuestionsUsed = false;
             btn.onclick = () => openQuestion(index);
         }
         grid.appendChild(btn);
@@ -123,7 +120,7 @@ window.openSubject = function(subjectIndex) {
     
     const backToBoardBtn = document.getElementById('back-to-board-btn');
     if (backToBoardBtn) {
-        backToBoardBtn.style.display = allQuestionsUsed ? 'inline-block' : 'none';
+        backToBoardBtn.style.display = 'inline-block';
     }
     
     showScreen('screen-questions');
@@ -133,6 +130,9 @@ window.openQuestion = function(questionIndex) {
     currentQuestionIndex = questionIndex;
     const qData = database[currentSubjectIndex].questions[questionIndex];
     
+    qData.isUsed = true;
+    localStorage.setItem('quizDatabase', JSON.stringify(database));
+
     document.getElementById('question-text').innerText = qData.q;
     document.getElementById('turn-indicator').innerText = `السؤال ${questionIndex + 1}`;
     
@@ -189,6 +189,7 @@ document.getElementById('btn-start-timer').addEventListener('click', () => {
 function handleTimeOut() {
     const qData = database[currentSubjectIndex].questions[currentQuestionIndex];
     qData.isUsed = true;
+    localStorage.setItem('quizDatabase', JSON.stringify(database));
     for (let i = 0; i < 4; i++) {
         document.getElementById(`opt${i}`).disabled = true;
     }
@@ -202,6 +203,7 @@ window.checkAnswer = function(selectedIndex) {
     timerStarted = false;
     const qData = database[currentSubjectIndex].questions[currentQuestionIndex];
     qData.isUsed = true;
+    localStorage.setItem('quizDatabase', JSON.stringify(database));
     
     if (selectedIndex === qData.correct) {
         document.getElementById('correct-modal').classList.remove('hidden');
