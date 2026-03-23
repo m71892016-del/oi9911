@@ -9,6 +9,29 @@ let timerInterval = null;
 let timeLeft = 30;
 let timerStarted = false;
 
+// كود التثبيت (PWA Install)
+let deferredPrompt;
+window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    const installBtn = document.getElementById('btn-install');
+    if (installBtn) {
+        installBtn.style.display = 'inline-block';
+    }
+});
+
+const installBtnElement = document.getElementById('btn-install');
+if(installBtnElement) {
+    installBtnElement.addEventListener('click', async () => {
+        if (deferredPrompt) {
+            deferredPrompt.prompt();
+            const { outcome } = await deferredPrompt.userChoice;
+            deferredPrompt = null;
+            installBtnElement.style.display = 'none';
+        }
+    });
+}
+
 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 function playTickSound() {
     if (audioCtx.state === 'suspended') audioCtx.resume();
