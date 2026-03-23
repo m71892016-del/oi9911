@@ -7,7 +7,7 @@
     
     <link rel="manifest" href="./manifest.json">
     <meta name="theme-color" content="#1565C0">
-    <link rel="apple-touch-icon" href="./icons/icon-192x192.png">
+    <link rel="apple-touch-icon" href="./icon-192x192.png">
     
     <link rel="stylesheet" href="./style.css">
 </head>
@@ -17,6 +17,7 @@
     <div class="container">
         
         <div id="screen-start" class="screen active">
+            <button id="btn-install" class="main-btn" style="display: none; background: linear-gradient(to bottom, #FF9800, #F57C00);">تثبيت التطبيق</button>
             <button id="btn-new-game" class="main-btn">مسابقة جديدة</button>
             <button id="btn-edit-db" class="main-btn" onclick="openEditScreen()">تعديل الأسئلة</button>
             <button id="btn-reset-used" class="main-btn" onclick="resetUsedQuestions()">رفع جميع التضليل</button>
