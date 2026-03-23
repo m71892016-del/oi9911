@@ -256,7 +256,7 @@ window.endGame = function() {
     countDisplay.style.display = 'block';
     countDisplay.innerText = count;
 
-    const beepAudio = new Audio('https://actions.google.com/sounds/v1/alarms/beep_short.ogg');
+    const beepAudio = new Audio('./audio/beep_short.ogg');
 
     const countdownInterval = setInterval(() => {
         count--;
@@ -272,10 +272,10 @@ window.endGame = function() {
             winnerDisplay.style.display = 'block';
             document.getElementById('winner-text').innerText = winMsg;
             
-            const clapAudio = new Audio('https://actions.google.com/sounds/v1/crowds/stadium_crowd_cheer.ogg');
+            const clapAudio = new Audio('./audio/stadium_crowd_cheer.ogg');
             clapAudio.play().catch(e => console.log(e));
 
-            const victoryMusic = new Audio('https://actions.google.com/sounds/v1/brass/brass_fanfare_with_timpani.ogg');
+            const victoryMusic = new Audio('./audio/brass_fanfare_with_timpani.ogg');
             victoryMusic.play().catch(e => console.log(e));
             
             createBalloons();
