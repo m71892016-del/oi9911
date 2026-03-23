@@ -1,12 +1,12 @@
-const CACHE_NAME = 'quiz-app-v1';
+const CACHE_NAME = 'quiz-app-v2';
 const ASSETS_TO_CACHE = [
     './',
     './index.html',
     './style.css',
     './script.js',
     './manifest.json',
-    './icons/icon-192x192.png',
-    './icons/icon-512x512.png',
+    './icon-192x192.png',
+    './icon-512x512.png',
     './images/bg-logo.jpg',
     './fonts/Tajawal-Regular.ttf',
     './fonts/Tajawal-Bold.ttf',
